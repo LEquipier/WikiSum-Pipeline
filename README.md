@@ -1,284 +1,125 @@
-# Wikipedia Text Summarization System
+# Wikipedia Content Fetching and Text Summarization System
 
-This is a lightweight Wikipedia content fetching and text summarization system based on Streamlit and PyTorch. The system allows users to input Wikipedia entries, retrieve content, and generate summaries using both pre-trained and fine-tuned models, while providing detailed summary quality evaluation.
+A lightweight end-to-end NLP pipeline that fetches Wikipedia articles and generates abstractive summaries using Facebook's BART model. The system supports both zero-shot and fine-tuned inference, evaluates summary quality with multiple metrics, and exposes everything through an interactive Streamlit web interface.
 
-## Main Features
+---
 
-- Wikipedia content fetching and preprocessing
-- Text summarization (supporting both pre-trained and fine-tuned models)
-- Summary quality evaluation (ROUGE metrics, paragraph coverage, etc.)
-- Model performance comparison
-- User-friendly web interface
+## Features
 
-## System Architecture
+- **Wikipedia Integration** — Fetch and preprocess articles by topic via the Wikipedia API
+- **Abstractive Summarization** — Generate high-quality summaries with `facebook/bart-large-cnn`
+- **Fine-tuning Support** — Train a custom BART model on your own Wikipedia corpus
+- **Quality Evaluation** — Score summaries using ROUGE-1/2/L, paragraph coverage, and information density
+- **Model Comparison** — Side-by-side benchmarking of pre-trained vs. fine-tuned models
+- **Web Interface** — Clean Streamlit UI with real-time summary generation and metric display
+- **GPU Acceleration** — Automatic CUDA detection and utilisation
 
-1. **Data Collection Module** (`wiki_data_collector.py`)
-   - Random Wikipedia article fetching
-   - Data preprocessing and storage
-   - Training data preparation
+---
 
-2. **Model Training Module** (`train_model.py`)
-   - BART model fine-tuning
-   - GPU training support
-   - Training process monitoring and logging
+## Project Structure
 
-3. **Text Summarization Module** (`text_summarizer.py`)
-   - Pre-trained and fine-tuned model support
-   - Summary length control
-   - Summary quality evaluation
-
-4. **Model Comparison Module** (`model_comparison.py`)
-   - Pre-trained vs. fine-tuned model performance comparison
-   - Multi-metric evaluation
-   - Results visualization
-
-5. **Web Application Module** (`light_app.py`)
-   - User-friendly interface
-   - Real-time summary generation
-   - Summary quality evaluation display
-
-## Code Details
-
-### 1. Data Collection Module (`wiki_data_collector.py`)
-
-```python
-def get_random_wiki_articles(num_articles=10):
-    """
-    Fetch random Wikipedia articles
-    - Set language to English
-    - Display progress with progress bar
-    - Ensure article length is sufficient (>1000 words)
-    - Include error handling and retry mechanism
-    """
-    # Implementation code...
-
-def save_articles_to_json(articles, filename="wiki_training_data.json"):
-    """
-    Save articles in JSON format
-    - Create data directory
-    - Save article content and summary
-    - Output statistics
-    """
-    # Implementation code...
+```
+├── light_app.py            # Streamlit web application
+├── text_summarizer.py      # Summarization and evaluation logic
+├── wiki_data_collector.py  # Wikipedia article fetching and storage
+├── train_model.py          # BART fine-tuning pipeline
+├── model_comparison.py     # Pre-trained vs. fine-tuned benchmarking
+├── wikipedia_utils.py      # Wikipedia helper utilities
+├── qa_engine.py            # Question-answering engine
+├── question_gen.py         # Question generation utilities
+└── requirement.txt         # Python dependencies
 ```
 
-### 2. Model Training Module (`train_model.py`)
+---
 
-```python
-def load_wiki_data(filepath="data/wiki_training_data.json"):
-    """
-    Load training data
-    - Read JSON file
-    - Prepare training samples
-    - Convert to dataset format
-    """
-    # Implementation code...
+## Tech Stack
 
-def train_model(data, model_name="facebook/bart-large-cnn"):
-    """
-    Train summarization model
-    - Load pre-trained model and tokenizer
-    - Data preprocessing
-    - Set training parameters
-    - Execute training process
-    - Save model
-    """
-    # Implementation code...
-```
+| Library | Purpose |
+|---|---|
+| [Streamlit](https://streamlit.io/) | Web application framework |
+| [PyTorch](https://pytorch.org/) | Deep learning backend |
+| [Transformers](https://huggingface.co/docs/transformers) | BART model and tokenizer |
+| [wikipedia](https://pypi.org/project/wikipedia/) | Wikipedia content fetching |
+| [rouge-score](https://pypi.org/project/rouge-score/) | Summary evaluation metrics |
+| [NLTK](https://www.nltk.org/) | Text preprocessing |
+| [scikit-learn](https://scikit-learn.org/) | Supporting ML utilities |
 
-### 3. Text Summarization Module (`text_summarizer.py`)
+---
 
-```python
-def initialize_summarizer():
-    """
-    Initialize summarizer
-    - Load pre-trained model
-    - Set device (CPU/GPU)
-    - Configure model parameters
-    """
-    # Implementation code...
+## Installation
 
-def summarize_text(text, max_length=200, min_length=100):
-    """
-    Generate text summary
-    - Text preprocessing
-    - Generate summary using model
-    - Adjust summary length
-    - Return processed summary
-    """
-    # Implementation code...
+**Prerequisites:** Python 3.9+
 
-def evaluate_summary(reference, hypothesis):
-    """
-    Evaluate summary quality
-    - Calculate ROUGE scores
-    - Calculate information density
-    - Calculate paragraph coverage
-    - Generate comprehensive score
-    """
-    # Implementation code...
-```
-
-### 4. Model Comparison Module (`model_comparison.py`)
-
-```python
-def compare_models(num_articles=100):
-    """
-    Compare model performance
-    - Fetch test articles
-    - Generate summaries
-    - Calculate evaluation metrics
-    - Save comparison results
-    """
-    # Implementation code...
-```
-
-### 5. Web Application Module (`light_app.py`)
-
-```python
-# Page configuration
-st.set_page_config(
-    page_title="Lightweight Wikipedia Content Fetcher",
-    page_icon="🤖",
-    layout="wide"
-)
-
-# Main interface
-def main():
-    """
-    Main application interface
-    - Display title and description
-    - Provide input fields
-    - Display results
-    - Handle user interaction
-    """
-    # Implementation code...
-```
-
-## Test Code
-
-### 1. Data Collection Tests
-
-```python
-# Test fetching single article
-def test_get_single_article():
-    article = get_random_wiki_articles(1)
-    assert len(article) == 1
-    assert 'title' in article[0]
-    assert 'content' in article[0]
-
-# Test data saving
-def test_save_articles():
-    articles = [{"title": "Test", "content": "Test content"}]
-    save_articles_to_json(articles, "test_data.json")
-    assert os.path.exists("data/test_data.json")
-```
-
-### 2. Model Training Tests
-
-```python
-# Test data loading
-def test_load_data():
-    data = load_wiki_data()
-    assert len(data) > 0
-    assert 'text' in data.features
-    assert 'summary' in data.features
-
-# Test model training
-def test_model_training():
-    # Test training process with small dataset
-    small_data = data.select(range(10))
-    train_model(small_data)
-    assert os.path.exists("models/wiki_summarizer")
-```
-
-### 3. Summary Generation Tests
-
-```python
-# Test summary generation
-def test_summarize_text():
-    text = "This is a test text for summarization."
-    summary = summarize_text(text)
-    assert len(summary) > 0
-    assert len(summary) < len(text)
-
-# Test summary evaluation
-def test_evaluate_summary():
-    reference = "This is a reference summary."
-    hypothesis = "This is a generated summary."
-    scores = evaluate_summary(reference, hypothesis)
-    assert 'rouge-1' in scores
-    assert 'comprehensive-score' in scores
-```
-
-### 4. Model Comparison Tests
-
-```python
-# Test model comparison
-def test_model_comparison():
-    results = compare_models(num_articles=5)
-    assert 'pretrained' in results
-    assert 'custom' in results
-    assert len(results['pretrained']) > 0
-```
-
-## Installation Instructions
-
-1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd <repository-directory>
-```
+# Clone the repository
+git clone https://github.com/your-username/Wikipedia-content-fetching-and-text-summarization-system.git
+cd Wikipedia-content-fetching-and-text-summarization-system
 
-2. Install dependencies:
-```bash
+# Install dependencies
 pip install -r requirement.txt
 ```
 
-## Usage Process
+> The first run will automatically download the `facebook/bart-large-cnn` model weights (~1.6 GB). A stable internet connection is required.
 
-1. Data collection (optional):
-```bash
-python wiki_data_collector.py
-```
+---
 
-2. Model training (optional):
-```bash
-python train_model.py
-```
+## Usage
 
-3. Run the application:
+### 1. Run the Web App (recommended)
+
 ```bash
 streamlit run light_app.py
 ```
 
-4. Access the application in your browser (default address: http://localhost:8501)
+Open [http://localhost:8501](http://localhost:8501) in your browser, enter a Wikipedia topic, and receive a summary with quality metrics instantly.
 
-## Tech Stack
+### 2. Collect Training Data (optional)
 
-- [Streamlit](https://streamlit.io/) - Web application framework
-- [PyTorch](https://pytorch.org/) - Deep learning framework
-- [Transformers](https://huggingface.co/transformers/) - Pre-trained models
-- [Wikipedia API](https://pypi.org/project/wikipedia/) - Wikipedia content fetching
-- [ROUGE](https://pypi.org/project/rouge-score/) - Summary evaluation metrics
+```bash
+python wiki_data_collector.py
+```
 
-## Model Details
+Fetches random Wikipedia articles (minimum 1,000 words each) and saves them to `data/wiki_training_data.json`.
 
-- **Pre-trained Model**: BART-large-cnn
-- **Fine-tuned Model**: BART model fine-tuned on Wikipedia data
-- **Evaluation Metrics**:
-  - ROUGE-1, ROUGE-2, ROUGE-L
-  - Paragraph coverage
-  - Information density
-  - Comprehensive score
+### 3. Fine-tune the Model (optional)
+
+```bash
+python train_model.py
+```
+
+Fine-tunes `facebook/bart-large-cnn` on the collected corpus. The trained model is saved to `models/wiki_summarizer/`. GPU is strongly recommended.
+
+### 4. Compare Models (optional)
+
+```bash
+python model_comparison.py
+```
+
+Runs a benchmark across a configurable number of test articles and outputs a side-by-side metric report for the pre-trained and fine-tuned models.
+
+---
+
+## Evaluation Metrics
+
+| Metric | Description |
+|---|---|
+| ROUGE-1 | Unigram overlap between generated and reference summary |
+| ROUGE-2 | Bigram overlap |
+| ROUGE-L | Longest common subsequence |
+| Paragraph Coverage | Fraction of source paragraphs reflected in the summary |
+| Information Density | Ratio of unique informative tokens to total summary tokens |
+| Comprehensive Score | Weighted aggregate of all the above metrics |
+
+---
 
 ## Notes
 
-- Initial run will download pre-trained models, which may take some time
-- Model training requires significant computational resources, GPU recommended
-- Data collection process may take considerable time, recommended to do in batches
-- Application supports custom summary length, adjustable as needed
+- Model training is resource-intensive; a CUDA-capable GPU with at least 8 GB VRAM is recommended.
+- Data collection makes live requests to the Wikipedia API; run in batches to avoid rate limits.
+- Summary length is configurable via the `max_length` and `min_length` parameters in `text_summarizer.py`.
+
+---
 
 ## License
 
-MIT 
+This project is licensed under the [MIT License](LICENSE).
